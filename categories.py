@@ -2,8 +2,8 @@ from tools import *
 
 
 categories_dict = {
-    "headphones": headphones,
-    "sneakers":sneakers
+    "headphones": get_headphones,
+    "sneakers":get_sneakers
 }
 
 categories_list = list(categories_dict.keys())

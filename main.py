@@ -1,25 +1,33 @@
 from categories import categories_dict, categories_list
 from collections import namedtuple
 
-import asyncio
+import asyncio, aiohttp
 
 ParserResponse = namedtuple("parser_response", ["text_result", "boolean_result"])
+
+async def set_parsers(categories_names: list) -> None:
+    async with aiohttp.ClientSession() as session:
+        categories_tasks = list()
+
+        for category_name in categories_names:
+
+            category_task = asyncio.create_task(
+                categories_dict[category_name](session=session)
+                )
+
+            categories_tasks.append(category_task)
+        await asyncio.gather(*categories_tasks)
 
 async def parse_categories(user_answer: str) -> ParserResponse:
     if user_answer == "exit":
         return ParserResponse("Работа программы завершена", True)
-
+ 
     try:
         categories_names = [categories_list[int(category_index) - 1] for category_index in user_answer.split(" ")]
 
-        categories_tasks = list()
-        
-        for category_name in categories_names:
-            category_task = asyncio.create_task(categories_dict[category_name]())
-            categories_tasks.append(category_task)
-        await asyncio.gather(*categories_tasks)
+        await set_parsers(categories_names=categories_names)
 
-        return ParserResponse("Парсер выполнил работу", True)
+        return ParserResponse("Парсер завершил работу", True)
     
     except IndexError as index_error:
         return ParserResponse("Вы ввели неверный идекс элемента из списка", False)
