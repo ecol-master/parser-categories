@@ -1,4 +1,4 @@
-from .headphones import headphones
-from .sneakers import sneakers
+from .headphones import get_headphones
+from .sneakers import get_sneakers
 
-__all__ = ["headphones", "sneakers"]
+__all__ = ["get_headphones", "get_sneakers"]
